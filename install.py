@@ -1,9 +1,9 @@
 from sys import version
 from utils.ColorUtils import *
 
-if float(version[0:3]) < 3.6:
-	print(color.FAIL+'Python 3.6 or above required!'+color.ENDC)
-	exit()
+# if float(version[0:3]) < 3.6:
+# 	print(color.FAIL+'Python 3.6 or above required!'+color.ENDC)
+# 	exit()
 
 import platform
 from os import mkdir, makedirs, remove, path, system, environ, getcwd
