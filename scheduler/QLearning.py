@@ -52,5 +52,6 @@ class QLearningScheduler(Scheduler):
             self.total_reward = 0
         
         self.episode += 1
-        print("Episode: {}, Total Reward: {}, Epsilon: {:.2f}".format(self.episode, total_reward, self.agent.epsilon))
-        return [action] 
+        print("Episode: {}, Total Reward: {}, Epsilon: {:.2f}".format(self.episode, self.total_reward, self.agent.epsilon))
+        selected_host, selected_container = action 
+        return [(container, selected_host) if container == selected_container else (container, -1) for container in containerlist] 
