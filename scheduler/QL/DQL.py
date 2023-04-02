@@ -7,19 +7,46 @@ import torch.optim as optim
 import numpy as np
 import random
 import gymnasium as gym
+from gymnasium import spaces
 
-class DQN(nn.Module):
+class SimulatorEnv(gym.Env):
+    def __init__(self, host_num, container_num):
+        # state space
+        self.state_num = 2 * container_num + host_num * container_num
+        self.observation_space = spaces.Box(low=0, high=1, shape=(state_num,), dtype=float)
+        # action space
+        self.action_space = spaces.Tuple((spaces.Discrete(host_num), spaces.Discrete(container_num)))
+        self.state = [random.uniform(0, 1) for _ in range(state_num)]
+        self.reward_range = (-1, 1)
+    
+    def reset(self):
+        # Reset the state to a new random value
+        self.state = [random.uniform(0, 1) for _ in range(self.state_num)]
+        return self.state
+    
+    def step(self, action):
+        host, container = action
+        self.state = None
+        reward = self._calculate_reward(self.state)
+        return self.state, reward, False, {}
+    
+    def _calculate_reward(self, state):
+        pass
+
+class DQL(nn.Module):
     def __init__(self, input_size, output_size):
-        super(DQN, self).__init__()
+        super(DQL, self).__init__()
         self.fc1 = nn.Linear(input_size, 128)
         self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, output_size)
+        self.fc3 = nn.Linear(64, 32)
+        self.fc4 = nn.Linear(32, output_size)
         self.relu = nn.ReLU()
         
     def forward(self, x):
         x = self.relu(self.fc1(x))
-        x = self.relu(self.fc2(x))
+        x = self.fc2(x)
         x = self.fc3(x)
+        x = self.fc4(x)
         return x
 
 class Agent():
@@ -35,9 +62,12 @@ class Agent():
         self.batch_size = batch_size
         
         self.replay_memory = []
-        self.pred_model = DQN(input_size, output_size)
-        self.target_model = DQN(input_size, output_size)
+        self.pred_model = DQL(input_size, output_size)
+        self.target_model = DQL(input_size, output_size)
         self.optimizer = optim.Adam(self.pred_model.parameters(), lr=self.learning_rate)
+        
+        # exploitation optimization
+        self.best_action_dict = {}
         
     def act(self, state):
         if random.random() > self.epsilon:
@@ -122,4 +152,5 @@ def q_learning():
         
     env.close()
 
-q_learning()
+if __name__ == "__main__":
+    q_learning()
