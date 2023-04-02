@@ -20,17 +20,19 @@ class SimulatorEnv(gym.Env):
         self.reward_range = (-1, 1)
     
     def reset(self):
-        # Reset the state to a new random value
+        # reset the state to a new random value
         self.state = [random.uniform(0, 1) for _ in range(self.state_num)]
         return self.state
     
     def step(self, action):
+        # needs to update the delay matrix and container location as well as resource allocation
         host, container = action
         self.state = None
         reward = self._calculate_reward(self.state)
         return self.state, reward, False, {}
     
     def _calculate_reward(self, state):
+        # calculate reward based on the formula provided by the paper
         pass
 
 class DQL(nn.Module):
