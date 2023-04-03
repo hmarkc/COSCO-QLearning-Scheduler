@@ -19,6 +19,9 @@ class SimulatorEnv(gym.Env):
         self.state = [random.uniform(0, 1) for _ in range(self.state_num)]
         self.reward_range = (-1, 1)
     
+    def setEnvironment(self, env):
+        self.env = env
+
     def reset(self):
         # reset the state to a new random value
         self.state = [random.uniform(0, 1) for _ in range(self.state_num)]
@@ -26,6 +29,7 @@ class SimulatorEnv(gym.Env):
     
     def step(self, action):
         # needs to update the delay matrix and container location as well as resource allocation
+        # self.env.stats.runSimpleSimulation([action])
         reward = self._calculate_reward(self.state)
         return self.state, reward, False, {}
     

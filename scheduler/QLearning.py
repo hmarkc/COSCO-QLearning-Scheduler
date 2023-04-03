@@ -26,6 +26,10 @@ class QLearningScheduler(Scheduler):
 
         self.agent = Agent(input_size, output_size, self.learning_rate, self.gamma, self.epsilon, self.epsilon_decay, self.min_epsilon, self.replay_memory_size, self.batch_size)
 
+    def setEnvironment(self, env):
+        super().setEnvironment(env)
+        self.simulator_env.setEnvironment(env)
+
     # select container to be sheduled or migrated
     def selection(self):
         return []
