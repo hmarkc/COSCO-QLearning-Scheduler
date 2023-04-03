@@ -10,7 +10,7 @@ class QLearningScheduler(Scheduler):
         self.episode = 0
         self.total_reward = 0
         self.simulator_env = SimulatorEnv(num_hosts, num_containers) # Environment for simulator
-        self.state = self.simulator_env.reset()
+        self.state = None
         self.action_map = [(i, j) for i in range(num_hosts) for j in range(num_containers)]
 
         self.learning_rate = learning_rate
@@ -45,6 +45,8 @@ class QLearningScheduler(Scheduler):
     #         decision.append((id, np.argmin(scores)))
     #     return decision
     def placement(self, containerlist):
+        if self.state is None:
+            self.state = self.simulator_env.reset()
         action = self.agent.act(self.state)
         action = self.decode_action(action)
         next_state, reward, done, _ = self.simulator_env.step(action)

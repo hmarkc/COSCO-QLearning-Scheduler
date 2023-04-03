@@ -8,6 +8,7 @@ import numpy as np
 import random
 import gymnasium as gym
 from gymnasium import spaces
+from .ql_formulae import *
 
 class SimulatorEnv(gym.Env):
     def __init__(self, host_num, container_num):
@@ -24,7 +25,7 @@ class SimulatorEnv(gym.Env):
 
     def reset(self):
         # reset the state to a new random value
-        self.state = [random.uniform(0, 1) for _ in range(self.state_num)]
+        self.state = state_vector(self.env)
         return self.state
     
     def step(self, action):
