@@ -11,6 +11,7 @@ class QLearningScheduler(Scheduler):
         self.total_reward = 0
         self.simulator_env = SimulatorEnv(num_hosts, num_containers) # Environment for simulator
         self.state = self.simulator_env.reset()
+        self.action_map = [(i, j) for i in range(num_hosts) for j in range(num_containers)]
 
         self.learning_rate = learning_rate
         self.gamma = gamma
@@ -29,6 +30,9 @@ class QLearningScheduler(Scheduler):
     def selection(self):
         return []
     
+    def decode_action(self, action):
+        return self.action_map[action]
+
     # place selected container to a host
     # def placement(self, containerIDs):
     #     decision = []
@@ -38,7 +42,8 @@ class QLearningScheduler(Scheduler):
     #     return decision
     def placement(self, containerlist):
         action = self.agent.act(self.state)
-        next_state, reward, done, _, _ = self.simulator_env.step(action)
+        action = self.decode_action(action)
+        next_state, reward, done, _ = self.simulator_env.step(action)
         self.agent.remember(self.state, action, reward, next_state, done)
         self.total_reward += reward
         self.state = next_state
@@ -54,4 +59,14 @@ class QLearningScheduler(Scheduler):
         self.episode += 1
         print("Episode: {}, Total Reward: {}, Epsilon: {:.2f}".format(self.episode, self.total_reward, self.agent.epsilon))
         selected_host, selected_container = action 
-        return [(container, selected_host) if container == selected_container else (container, -1) for container in containerlist] 
+        print([c.id if c else -1 for c in self.env.containerlist], containerlist)
+        # performs migration on only 1 container, the rest are placed on the same host
+        decision = []
+        for c in containerlist:
+            if c == selected_container:
+                decision.append((c, selected_host))
+            else:
+                host = random.randint(0, len(self.env.hostlist) - 1) if self.env.containerlist[c].hostid == -1 else self.env.containerlist[c].hostid
+                decision.append((c, host))
+        print('decision', decision)
+        return decision

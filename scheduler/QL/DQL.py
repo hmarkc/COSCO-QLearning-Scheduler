@@ -13,10 +13,10 @@ class SimulatorEnv(gym.Env):
     def __init__(self, host_num, container_num):
         # state space
         self.state_num = 2 * container_num + host_num * container_num
-        self.observation_space = spaces.Box(low=0, high=1, shape=(state_num,), dtype=float)
+        self.observation_space = spaces.Box(low=0, high=1, shape=(self.state_num,), dtype=float)
         # action space
         self.action_space = spaces.Tuple((spaces.Discrete(host_num), spaces.Discrete(container_num)))
-        self.state = [random.uniform(0, 1) for _ in range(state_num)]
+        self.state = [random.uniform(0, 1) for _ in range(self.state_num)]
         self.reward_range = (-1, 1)
     
     def reset(self):
@@ -26,14 +26,12 @@ class SimulatorEnv(gym.Env):
     
     def step(self, action):
         # needs to update the delay matrix and container location as well as resource allocation
-        host, container = action
-        self.state = None
         reward = self._calculate_reward(self.state)
         return self.state, reward, False, {}
     
     def _calculate_reward(self, state):
         # calculate reward based on the formula provided by the paper
-        pass
+        return 0
 
 class DQL(nn.Module):
     def __init__(self, input_size, output_size):
@@ -67,7 +65,7 @@ class Agent():
         self.pred_model = DQL(input_size, output_size)
         self.target_model = DQL(input_size, output_size)
         self.optimizer = optim.Adam(self.pred_model.parameters(), lr=self.learning_rate)
-        
+
         # exploitation optimization
         self.best_action_dict = {}
         
