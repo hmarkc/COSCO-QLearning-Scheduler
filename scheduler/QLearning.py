@@ -48,8 +48,19 @@ class QLearningScheduler(Scheduler):
         if self.state is None:
             self.state = self.simulator_env.reset()
         action = self.agent.act(self.state)
-        action = self.decode_action(action)
-        next_state, reward, done, _ = self.simulator_env.step(action)
+        selected_host, selected_container = self.decode_action(action)
+
+        # performs migration on only 1 container, the rest are placed on the same host
+        decision = []
+        for c in containerlist:
+            if c == selected_container:
+                decision.append((c, selected_host))
+            else:
+                host = random.randint(0, len(self.env.hostlist) - 1) if self.env.containerlist[c].hostid == -1 else self.env.containerlist[c].hostid
+                decision.append((c, host))
+        print('decision', decision)
+
+        next_state, reward, done, _ = self.simulator_env.step((selected_host, selected_container))
         self.agent.remember(self.state, action, reward, next_state, done)
         self.total_reward += reward
         self.state = next_state
@@ -64,15 +75,4 @@ class QLearningScheduler(Scheduler):
         
         self.episode += 1
         print("Episode: {}, Total Reward: {}, Epsilon: {:.2f}".format(self.episode, self.total_reward, self.agent.epsilon))
-        selected_host, selected_container = action 
-        print([c.id if c else -1 for c in self.env.containerlist], containerlist)
-        # performs migration on only 1 container, the rest are placed on the same host
-        decision = []
-        for c in containerlist:
-            if c == selected_container:
-                decision.append((c, selected_host))
-            else:
-                host = random.randint(0, len(self.env.hostlist) - 1) if self.env.containerlist[c].hostid == -1 else self.env.containerlist[c].hostid
-                decision.append((c, host))
-        print('decision', decision)
         return decision

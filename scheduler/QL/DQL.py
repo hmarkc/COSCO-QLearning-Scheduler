@@ -31,12 +31,13 @@ class SimulatorEnv(gym.Env):
     def step(self, action):
         # needs to update the delay matrix and container location as well as resource allocation
         # self.env.stats.runSimpleSimulation([action])
-        reward = self._calculate_reward(self.state)
+        reward = self._calculate_reward(action)
         return self.state, reward, False, {}
     
-    def _calculate_reward(self, state):
+    def _calculate_reward(self, action):
         # calculate reward based on the formula provided by the paper
-        return 0
+        print('action', action)
+        return reward(self.env, [action])
 
 class DQL(nn.Module):
     def __init__(self, input_size, output_size):
