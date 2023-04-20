@@ -42,10 +42,10 @@ class SimulatorEnv(gym.Env):
 class DQL(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQL, self).__init__()
-        self.fc1 = nn.Linear(input_size, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 32)
-        self.fc4 = nn.Linear(32, output_size)
+        self.fc1 = nn.Linear(input_size, input_size * 2)
+        self.fc2 = nn.Linear(input_size * 2, input_size)
+        self.fc3 = nn.Linear(input_size, output_size)
+        self.fc4 = nn.Linear(output_size, output_size)
         self.relu = nn.ReLU()
         
     def forward(self, x):

@@ -38,12 +38,6 @@ class QLearningScheduler(Scheduler):
         return self.action_map[action]
 
     # place selected container to a host
-    # def placement(self, containerIDs):
-    #     decision = []
-    #     for id in containerIDs:
-    #         scores = [self.env.stats.runSimpleSimulation([(id, hostId)])[0] for hostId, _ in enumerate(self.env.hostlist)]
-    #         decision.append((id, np.argmin(scores)))
-    #     return decision
     def placement(self, containerlist):
         if self.state is None:
             self.state = self.simulator_env.reset()
@@ -52,13 +46,15 @@ class QLearningScheduler(Scheduler):
 
         # performs migration on only 1 container, the rest are placed on the same host
         decision = []
-        for c in containerlist:
+        for container in self.env.containerlist:
+            if container is None:
+                continue
+            c = container.id
             if c == selected_container:
                 decision.append((c, selected_host))
             else:
                 host = random.randint(0, len(self.env.hostlist) - 1) if self.env.containerlist[c].hostid == -1 else self.env.containerlist[c].hostid
                 decision.append((c, host))
-        print('decision', decision)
 
         next_state, reward, done, _ = self.simulator_env.step((selected_host, selected_container))
         self.agent.remember(self.state, action, reward, next_state, done)
