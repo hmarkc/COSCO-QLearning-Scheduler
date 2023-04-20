@@ -37,7 +37,13 @@ class SimulatorEnv(gym.Env):
     def _calculate_reward(self, action):
         # calculate reward based on the formula provided by the paper
         print('action', action)
-        return reward(self.env, [action])
+        if self.env.containerlist[action[1]] is not None:
+            original_host, self.env.containerlist[action[1]].hostid = self.env.containerlist[action[1]].hostid, action[0]
+            r = reward(self.env, [action])
+            self.env.containerlist[action[1]].hostid = original_host
+        else:
+            r = reward(self.env, [action])
+        return r
 
 class DQL(nn.Module):
     def __init__(self, input_size, output_size):
