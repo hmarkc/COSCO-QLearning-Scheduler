@@ -67,7 +67,7 @@ parser.add_option("-m", "--mode", action="store", dest="mode", default="0",
 opts, args = parser.parse_args()
 
 # Global constants
-NUM_SIM_STEPS = 20
+NUM_SIM_STEPS = 100
 HOSTS = 10 * 5 if opts.env == '' else 10
 CONTAINERS = HOSTS
 TOTAL_POWER = 1000
@@ -105,7 +105,7 @@ def initalizeEnvironment(environment, logger):
 	# Initialize scheduler
 	''' Can be LRMMTR, RF, RL, RM, Random, RLRMMTR, TMCR, TMMR, TMMTR, GA, GOBI (arg = 'energy_latency_'+str(HOSTS)) '''
 	# scheduler = GOBIScheduler('energy_latency_'+str(HOSTS)) # GOBIScheduler('energy_latency_'+str(HOSTS))
-	scheduler = QLearningScheduler(2, 3)
+	scheduler = QLearningScheduler(HOSTS, CONTAINERS)
 
 	# Initialize Environment
 	hostlist = datacenter.generateHosts()

@@ -26,6 +26,8 @@ def total_delay(env, k=1):
 def migration_cost_of_container(env, container_id, new_host_id, allocBw):
     migrationTime = 0
     container = env.getContainerByID(container_id)
+    if container is None: 
+        return 0
     if container.hostid != new_host_id:
         migrationTime += container.getContainerSize() / allocBw
         if new_host_id != -1:
