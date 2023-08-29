@@ -24,6 +24,10 @@ def total_delay(env, k=1):
 
 # migration cost of container
 def migration_cost_of_container(env, container_id, new_host_id, allocBw):
+    # Migrate if allocated to a different host
+    # Migration time is sum of network latency 
+    # and time to transfer container based on 
+    # network bandwidth and container size.
     migrationTime = 0
     container = env.getContainerByID(container_id)
     if container is None: 

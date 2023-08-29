@@ -32,6 +32,7 @@ class SimulatorEnv(gym.Env):
         # needs to update the delay matrix and container location as well as resource allocation
         # self.env.stats.runSimpleSimulation([action])
         reward = self._calculate_reward(action)
+        self.reset()
         return self.state, reward, False, {}
     
     def _calculate_reward(self, action):

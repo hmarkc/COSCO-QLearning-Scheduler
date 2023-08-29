@@ -39,8 +39,7 @@ class QLearningScheduler(Scheduler):
 
     # place selected container to a host
     def placement(self, containerlist):
-        if self.state is None:
-            self.state = self.simulator_env.reset()
+        self.state = self.simulator_env.reset()
         action = self.agent.act(self.state)
         selected_host, selected_container = self.decode_action(action)
 
